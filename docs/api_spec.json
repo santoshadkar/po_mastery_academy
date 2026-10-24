@@ -1,0 +1,324 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PO Mastery Academy API Specification",
+    "description": "Enterprise API specification for the Product Owner Learning and 30-Mock Exam Certification Simulator Portal.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "UP" },
+                    "timestamp": { "type": "string" },
+                    "version": { "type": "string", "example": "1.0.0" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chapters": {
+      "get": {
+        "summary": "Retrieve all learning chapters with overview and assessment metadata",
+        "responses": {
+          "200": {
+            "description": "List of chapters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChapterSummary" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chapters/{id}": {
+      "get": {
+        "summary": "Retrieve full chapter content including sections and assessment questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full chapter details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChapterDetail" }
+              }
+            }
+          },
+          "404": { "description": "Chapter not found" }
+        }
+      }
+    },
+    "/chapters/{id}/submit-assessment": {
+      "post": {
+        "summary": "Submit and grade chapter assessment answers",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answers": {
+                    "type": "object",
+                    "additionalProperties": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Assessment evaluation results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssessmentResult" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/certifications": {
+      "get": {
+        "summary": "List all 6 supported certification tracks (PSPO I, II, III, CSPO, SAFe POPM, ICP-APO) with exam rosters",
+        "responses": {
+          "200": {
+            "description": "List of certification tracks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CertificationTrack" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/certifications/{certId}/exams/{examId}": {
+      "get": {
+        "summary": "Fetch mock exam questions (with or without answers based on mode)",
+        "parameters": [
+          { "name": "certId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "examId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mock exam payload",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MockExam" }
+              }
+            }
+          },
+          "404": { "description": "Exam not found" }
+        }
+      }
+    },
+    "/certifications/{certId}/exams/{examId}/evaluate": {
+      "post": {
+        "summary": "Submit user responses for diagnostic grading against official framework standards",
+        "parameters": [
+          { "name": "certId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "examId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answers": { "type": "object" },
+                  "timeSpentSeconds": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Diagnostic evaluation report",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExamEvaluationReport" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/daily-byte": {
+      "get": {
+        "summary": "Retrieve the current day's PO Daily Byte or by day parameter",
+        "parameters": [
+          { "name": "day", "in": "query", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daily Byte object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DailyByte" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources": {
+      "get": {
+        "summary": "Retrieve curated books, podcasts, videos, and masterclasses",
+        "parameters": [
+          { "name": "type", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ResourceItem" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChapterSummary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "category": { "type": "string" },
+          "level": { "type": "string" },
+          "readTime": { "type": "string" },
+          "summary": { "type": "string" },
+          "questionCount": { "type": "integer" }
+        }
+      },
+      "ChapterDetail": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "category": { "type": "string" },
+          "level": { "type": "string" },
+          "readTime": { "type": "string" },
+          "summary": { "type": "string" },
+          "sections": { "type": "array" },
+          "assessment": { "type": "array" }
+        }
+      },
+      "AssessmentResult": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number" },
+          "total": { "type": "number" },
+          "percentage": { "type": "number" },
+          "passed": { "type": "boolean" },
+          "breakdown": { "type": "array" }
+        }
+      },
+      "CertificationTrack": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "issuingBody": { "type": "string" },
+          "description": { "type": "string" },
+          "passingScore": { "type": "integer" },
+          "durationMinutes": { "type": "integer" },
+          "examCount": { "type": "integer" },
+          "exams": { "type": "array" }
+        }
+      },
+      "MockExam": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "certId": { "type": "string" },
+          "examNumber": { "type": "integer" },
+          "durationMinutes": { "type": "integer" },
+          "passingScore": { "type": "integer" },
+          "questions": { "type": "array" }
+        }
+      },
+      "ExamEvaluationReport": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number" },
+          "total": { "type": "number" },
+          "percentage": { "type": "number" },
+          "passed": { "type": "boolean" },
+          "passingScore": { "type": "number" },
+          "domainScores": { "type": "object" },
+          "results": { "type": "array" }
+        }
+      },
+      "DailyByte": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "dayNumber": { "type": "integer" },
+          "title": { "type": "string" },
+          "coreConcept": { "type": "string" },
+          "realWorldDilemma": { "type": "object" },
+          "proTip": { "type": "string" }
+        }
+      },
+      "ResourceItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "author": { "type": "string" },
+          "url": { "type": "string" },
+          "description": { "type": "string" },
+          "tags": { "type": "array" }
+        }
+      }
+    }
+  }
+}
