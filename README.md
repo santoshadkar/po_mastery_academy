@@ -102,6 +102,27 @@ Open [http://localhost:5000](http://localhost:5000) in your browser.
 
 ---
 
+## ⚡ Deploy to Vercel
+
+The repository is pre-configured with `vercel.json` and an `/api` serverless handler for 1-click deployment on Vercel:
+
+### Option A: Via Vercel Web Dashboard (Recommended)
+1. Go to [https://vercel.com/new](https://vercel.com/new).
+2. Connect your GitHub account and import **`santoshadkar/po_mastery_academy`**.
+3. Vercel automatically detects the build settings:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+4. Click **Deploy**. Vercel will build and assign you a live HTTPS production domain (`https://po-mastery-academy.vercel.app`) in ~45 seconds!
+
+### Option B: Via Vercel CLI
+```bash
+npm install -g vercel
+vercel
+```
+
+---
+
 ## 📋 Enterprise Governance Documentation
 - `docs/pi_planning_board.md` - PI Planning board & ART delivery objectives
 - `docs/PRD.md` - Product Requirements Document
