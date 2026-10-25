@@ -6,6 +6,7 @@ import CertificationSimulatorView from './components/CertificationSimulatorView'
 import DailyByteView from './components/DailyByteView';
 import ResourceHubView from './components/ResourceHubView';
 import AiProductManagerView from './components/AiProductManagerView';
+import AiCertificationView from './components/AiCertificationView';
 
 import chaptersData from './data/chapters';
 import certificationsData from './data/certifications';
@@ -148,6 +149,12 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'aiCert' && (
+          <AiCertificationView
+            onNavigateToAiPmHub={() => setActiveTab('aiPm')}
+          />
+        )}
+
         {activeTab === 'resources' && (
           <ResourceHubView
             resources={resourcesData}
@@ -161,13 +168,15 @@ export default function App() {
           <div className="space-y-1">
             <span className="font-bold text-white text-sm">PO Mastery Academy</span>
             <p className="text-slate-500">
-              Enterprise Product Owner & AI Product Manager Enablement Portal • Aligned to Scrum Guide 2020, EBM, SAFe 6.0, and Generative AI Architectures.
+              Enterprise Product Owner & AI Product Manager Enablement Portal • Aligned to Scrum Guide 2020, EBM, SAFe 6.0, and International AI PM Frameworks.
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 text-slate-400">
             <span className="hover:text-white cursor-pointer" onClick={() => setActiveTab('chapters')}>11 Chapters</span>
             <span>•</span>
             <span className="hover:text-purple-400 font-semibold cursor-pointer text-purple-300" onClick={() => setActiveTab('aiPm')}>🤖 AI PM Suite</span>
+            <span>•</span>
+            <span className="hover:text-emerald-400 font-semibold cursor-pointer text-emerald-300" onClick={() => setActiveTab('aiCert')}>🎓 AI PM Certification (IPL)</span>
             <span>•</span>
             <span className="hover:text-white cursor-pointer" onClick={() => setActiveTab('certifications')}>30 Mock Exams</span>
             <span>•</span>

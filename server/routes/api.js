@@ -6,6 +6,7 @@ const certifications = require('../data/certifications');
 const dailyBytes = require('../data/dailyBytes');
 const resources = require('../data/resources');
 const aiPmData = require('../data/aiPmData');
+const aiCertData = require('../data/aiCertificationData');
 
 // Health Check
 router.get('/health', (req, res) => {
@@ -277,6 +278,84 @@ router.get('/ai-pm/tools', (req, res) => {
     modelPricingBenchmarks: aiPmData.modelPricingBenchmarks,
     architectureTradeoffs: aiPmData.architectureTradeoffs,
     readinessQuestions: aiPmData.readinessQuestions
+  });
+});
+
+// AI PM Certification - Program Syllabus & Framework
+router.get('/ai-cert/program', (req, res) => {
+  res.json({
+    program: aiCertData.program,
+    outcomes: aiCertData.outcomes,
+    competencyFramework: aiCertData.competencyFramework,
+    coreCourses: aiCertData.coreCourses,
+    electives: aiCertData.electives,
+    toolsCovered: aiCertData.toolsCovered,
+    hiringCompanies: aiCertData.hiringCompanies,
+    executiveCoaches: aiCertData.executiveCoaches
+  });
+});
+
+// AI PM Certification - Get Official Mock Exam
+router.get('/ai-cert/exam', (req, res) => {
+  // Strip correct answer for client delivery
+  const publicExam = {
+    ...aiCertData.certificationSimulator,
+    questions: aiCertData.certificationSimulator.questions.map(q => ({
+      id: q.id,
+      course: q.course,
+      domain: q.domain,
+      question: q.question,
+      options: q.options
+    }))
+  };
+  res.json(publicExam);
+});
+
+// AI PM Certification - Submit Exam & Grade
+router.post('/ai-cert/submit-exam', (req, res) => {
+  const userAnswers = req.body.answers || {};
+  const exam = aiCertData.certificationSimulator;
+  let correctCount = 0;
+  const domainBreakdown = {};
+
+  const details = exam.questions.map(q => {
+    const selected = userAnswers[q.id];
+    const isCorrect = selected === q.answer;
+    if (isCorrect) correctCount++;
+
+    if (!domainBreakdown[q.domain]) {
+      domainBreakdown[q.domain] = { total: 0, correct: 0 };
+    }
+    domainBreakdown[q.domain].total++;
+    if (isCorrect) domainBreakdown[q.domain].correct++;
+
+    return {
+      questionId: q.id,
+      question: q.question,
+      domain: q.domain,
+      course: q.course,
+      selectedAnswer: selected !== undefined ? selected : null,
+      correctAnswer: q.answer,
+      isCorrect,
+      explanation: q.explanation
+    };
+  });
+
+  const total = exam.questions.length;
+  const percentage = Math.round((correctCount / total) * 100);
+  const passed = percentage >= exam.passingScore;
+
+  res.json({
+    passed,
+    score: correctCount,
+    total,
+    percentage,
+    passingScore: exam.passingScore,
+    candidateName: req.body.candidateName || 'AI Product Professional',
+    issuedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    certificateId: `IPL-AIPM-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+    domainBreakdown,
+    details
   });
 });
 

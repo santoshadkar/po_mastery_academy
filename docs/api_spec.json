@@ -240,6 +240,50 @@
           }
         }
       }
+    },
+    "/ai-cert/program": {
+      "get": {
+        "summary": "Retrieve complete International Certificate in AI Product Management program syllabus, 3 core courses, 4 electives, Adaptive Competency Framework, tools, and mentors",
+        "responses": {
+          "200": {
+            "description": "Full AI PM Certification program specification"
+          }
+        }
+      }
+    },
+    "/ai-cert/exam": {
+      "get": {
+        "summary": "Retrieve 25-question official replica exam simulator for International AI PM Certification",
+        "responses": {
+          "200": {
+            "description": "25 examination questions across courses AIPM401F, AIPM402F, AIPM403F and electives"
+          }
+        }
+      }
+    },
+    "/ai-cert/submit-exam": {
+      "post": {
+        "summary": "Submit and grade 25-question AI PM certification exam, calculate domain breakdowns, and issue accredited certificate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "candidateName": { "type": "string" },
+                  "answers": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Grading report, domain diagnostic, passing status, and certificate metadata"
+          }
+        }
+      }
     }
   },
   "components": {

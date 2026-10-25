@@ -22,7 +22,8 @@ export default function Header({
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Compass },
     { id: 'chapters', label: 'Learning Academy', icon: BookOpen, badge: `${completedChaptersCount}/11` },
-    { id: 'aiPm', label: 'AI Product Manager', icon: Bot, badge: 'New', isAi: true },
+    { id: 'aiPm', label: 'AI PM Hub', icon: Bot, isAi: true },
+    { id: 'aiCert', label: 'AI PM Certification', icon: Award, badge: 'IPL 3 Courses', isCert: true },
     { id: 'certifications', label: '30 Mock Exams', icon: Timer, badge: `${completedExamsCount}/30` },
     { id: 'dailyByte', label: 'PO Daily Byte', icon: Sparkles, highlight: true },
     { id: 'resources', label: 'Media Library', icon: Library }
@@ -66,9 +67,13 @@ export default function Header({
                   onClick={() => setActiveTab(item.id)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? item.isAi 
+                      ? item.isCert
+                        ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30 font-semibold'
+                        : item.isAi 
                         ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold'
                         : 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
+                      : item.isCert
+                      ? 'text-emerald-300 hover:bg-slate-800 hover:text-emerald-200 bg-emerald-500/10 border border-emerald-500/30'
                       : item.isAi
                       ? 'text-indigo-300 hover:bg-slate-800 hover:text-indigo-200 bg-indigo-500/10 border border-indigo-500/20'
                       : item.highlight
@@ -76,12 +81,14 @@ export default function Header({
                       : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.isAi ? 'text-indigo-400' : item.highlight ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.isCert ? 'text-emerald-400' : item.isAi ? 'text-indigo-400' : item.highlight ? 'text-amber-400' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                   {item.badge && (
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
                       isActive 
                         ? 'bg-black/30 text-white' 
+                        : item.isCert
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                         : item.isAi 
                         ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
                         : 'bg-slate-800 text-slate-400'

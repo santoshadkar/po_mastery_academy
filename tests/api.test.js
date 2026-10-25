@@ -185,3 +185,64 @@ test('8. AI Product Manager Master Suite & Data Integrity', (t) => {
   assert.ok(ch11.subChapters.length >= 5, 'Chapter 11 must have at least 5 in-depth sub-chapters');
   assert.ok(ch11.assessment.length >= 5, 'Chapter 11 must have 5 scenario assessment questions');
 });
+
+test('9. International Certificate in AI Product Management (IPL Accredited) Data Integrity', (t) => {
+  const aiCertData = require('../server/data/aiCertificationData');
+  assert.ok(aiCertData, 'aiCertData must exist');
+
+  // 1. Program & Outcomes
+  assert.ok(aiCertData.program.title.includes('AI Product Management'), 'Must specify AI Product Management program title');
+  assert.equal(aiCertData.outcomes.length, 6, 'Must specify exactly 6 core program outcomes');
+
+  // 2. Adaptive AI PM Competency Framework
+  const fw = aiCertData.competencyFramework;
+  assert.ok(fw, 'Must define Adaptive AI PM Competency Framework');
+  assert.equal(fw.practiceAreas.length, 5, 'Must define 5 core practice areas');
+  assert.equal(fw.personaRings.length, 3, 'Must define 3 persona rings (Business PM, Tech/Data PM, Domain PM)');
+  assert.equal(fw.aiPillars.length, 3, 'Must define 3 AI pillars (Generative, Predictive, Agentic)');
+
+  // 3. 3 Core Courses (AIPM401F, AIPM402F, AIPM403F)
+  assert.equal(aiCertData.coreCourses.length, 3, 'Must include exactly 3 core courses');
+  const codes = aiCertData.coreCourses.map(c => c.code);
+  assert.ok(codes.includes('AIPM401F'), 'Must include AIPM401F: Generative AI Product Management');
+  assert.ok(codes.includes('AIPM402F'), 'Must include AIPM402F: Predictive AI in Product Management');
+  assert.ok(codes.includes('AIPM403F'), 'Must include AIPM403F: Agent-driven Automation in Products');
+
+  aiCertData.coreCourses.forEach(course => {
+    assert.ok(course.modules.length >= 4, `${course.code} must have at least 4 in-depth modules`);
+    course.modules.forEach(mod => {
+      assert.ok(mod.id, 'Module must have id');
+      assert.ok(mod.title, 'Module must have title');
+      assert.ok(mod.topics.length >= 3, `Module ${mod.id} must have detailed topic list`);
+      assert.ok(mod.practicalExercise, `Module ${mod.id} must have a hands-on project exercise`);
+    });
+  });
+
+  // 4. 4 Elective Courses
+  assert.equal(aiCertData.electives.length, 4, 'Must include 4 elective micro-certification courses');
+  const elCodes = aiCertData.electives.map(e => e.code);
+  assert.ok(elCodes.includes('LDR401F'), 'Must include LDR401F');
+  assert.ok(elCodes.includes('LDR402F'), 'Must include LDR402F');
+  assert.ok(elCodes.includes('STG401F'), 'Must include STG401F');
+  assert.ok(elCodes.includes('DSN401F'), 'Must include DSN401F');
+
+  // 5. Tools & Coaches
+  assert.ok(aiCertData.toolsCovered.length >= 8, 'Must cover at least 8 industry tools (Google AI Studio, n8n, Langflow, AutoGen, Claude, etc.)');
+  assert.ok(aiCertData.executiveCoaches.length >= 8, 'Must list executive coaches');
+  assert.ok(aiCertData.hiringCompanies.length >= 15, 'Must list hiring companies');
+
+  // 6. 25-Question Official Exam Simulator
+  const sim = aiCertData.certificationSimulator;
+  assert.ok(sim, 'Must include official replica exam simulator');
+  assert.equal(sim.questions.length, 25, 'Exam simulator must contain exactly 25 comprehensive questions');
+  assert.equal(sim.passingScore, 80, 'Exam simulator passing threshold must be 80%');
+  sim.questions.forEach((q, idx) => {
+    assert.ok(q.id, `Sim question ${idx} must have id`);
+    assert.ok(q.question, `Sim question ${idx} must have text`);
+    assert.equal(q.options.length, 4, `Sim question ${idx} must have 4 options`);
+    assert.ok(typeof q.answer === 'number', `Sim question ${idx} must have numeric answer`);
+    assert.ok(q.explanation, `Sim question ${idx} must have syllabus explanation`);
+    assert.ok(q.course, `Sim question ${idx} must be mapped to a course code`);
+    assert.ok(q.domain, `Sim question ${idx} must be mapped to a syllabus domain`);
+  });
+});

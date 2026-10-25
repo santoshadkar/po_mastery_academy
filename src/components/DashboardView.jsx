@@ -58,6 +58,13 @@ export default function DashboardView({
                 <span>Continue Curriculum</span>
               </button>
               <button 
+                onClick={() => setActiveTab('aiCert')}
+                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/30 transition transform hover:-translate-y-0.5"
+              >
+                <Award className="w-4 h-4 text-emerald-200" />
+                <span>AI PM Certification (IPL)</span>
+              </button>
+              <button 
                 onClick={() => setActiveTab('aiPm')}
                 className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-600/30 transition transform hover:-translate-y-0.5"
               >
