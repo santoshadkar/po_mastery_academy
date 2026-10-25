@@ -24,7 +24,10 @@ import {
   RotateCcw, 
   AlertCircle,
   ExternalLink,
-  GraduationCap
+  GraduationCap,
+  Copy,
+  Check,
+  Search
 } from 'lucide-react';
 import aiCertData from '../data/aiCertification';
 
@@ -34,6 +37,10 @@ export default function AiCertificationView({ onNavigateToAiPmHub }) {
   const [selectedElectiveIndex, setSelectedElectiveIndex] = useState(0);
   const [selectedFrameworkPersona, setSelectedFrameworkPersona] = useState('Business Product Manager');
   const [expandedModuleId, setExpandedModuleId] = useState('mod-1-1');
+  const [expandedElectiveModuleId, setExpandedElectiveModuleId] = useState('ldr-1-1');
+  const [expandedTopics, setExpandedTopics] = useState({ 'mod-1-1-0': true });
+  const [copiedTemplateKey, setCopiedTemplateKey] = useState(null);
+  const [courseSearchQuery, setCourseSearchQuery] = useState('');
 
   // Simulator State
   const [simActive, setSimActive] = useState(false);
@@ -42,6 +49,95 @@ export default function AiCertificationView({ onNavigateToAiPmHub }) {
   const [simTimeRemaining, setSimTimeRemaining] = useState(45 * 60); // 45 minutes
   const [simSubmitted, setSimSubmitted] = useState(false);
   const [candidateName, setCandidateName] = useState('AI Product Leader');
+
+  const handleCopyTemplate = (key, text) => {
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(text);
+    }
+    setCopiedTemplateKey(key);
+    setTimeout(() => {
+      setCopiedTemplateKey(null);
+    }, 2500);
+  };
+
+  const toggleTopic = (topicKey) => {
+    setExpandedTopics(prev => ({
+      ...prev,
+      [topicKey]: !prev[topicKey]
+    }));
+  };
+
+  const isEveryTopicExpanded = (modId, topics) => {
+    if (!topics || topics.length === 0) return false;
+    return topics.every((_, idx) => !!expandedTopics[`${modId}-${idx}`]);
+  };
+
+  const toggleAllTopicsInModule = (modId, topics) => {
+    if (!topics || topics.length === 0) return;
+    const allCurrentlyExpanded = isEveryTopicExpanded(modId, topics);
+    setExpandedTopics(prev => {
+      const next = { ...prev };
+      topics.forEach((_, idx) => {
+        next[`${modId}-${idx}`] = !allCurrentlyExpanded;
+      });
+      return next;
+    });
+  };
+
+  const inlineFormat = (str) => {
+    if (!str) return '';
+    return str
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic text-slate-800">$1</em>')
+      .replace(/`([^`]+)`/g, '<code class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded text-xs font-mono font-semibold border border-indigo-100">$1</code>')
+      .replace(/\$([^\$]+)\$/g, '<span class="font-mono text-indigo-800 bg-indigo-50/70 px-1 py-0.5 rounded font-semibold">$1</span>');
+  };
+
+  const renderFormattedText = (text) => {
+    if (!text) return null;
+    const blocks = text.split('\n\n');
+    return blocks.map((block, idx) => {
+      const trimmed = block.trim();
+      if (!trimmed) return null;
+
+      if (trimmed.startsWith('```') || trimmed.startsWith('\\`\\`\\`')) {
+        const clean = trimmed
+          .replace(/^```[a-z]*\n?|^\\`\\`\\`[a-z]*\n?/, '')
+          .replace(/```$|\\`\\`\\`$/, '')
+          .trim();
+        return (
+          <pre key={idx} className="bg-slate-950 text-indigo-200 p-4 rounded-xl text-xs font-mono overflow-x-auto my-3 border border-indigo-900/60 leading-relaxed shadow-inner">
+            <code>{clean}</code>
+          </pre>
+        );
+      }
+
+      const lines = trimmed.split('\n');
+      if (lines.length > 1 && lines.every(l => l.trim().startsWith('- ') || l.trim().startsWith('* ') || /^\d+\.\s/.test(l.trim()))) {
+        return (
+          <ul key={idx} className="space-y-1.5 my-2.5 pl-4 list-disc text-slate-700 text-xs sm:text-sm">
+            {lines.map((line, lIdx) => (
+              <li 
+                key={lIdx} 
+                className="leading-relaxed"
+                dangerouslySetInnerHTML={{ 
+                  __html: inlineFormat(line.replace(/^[-*]\s+|\d+\.\s+/, '')) 
+                }} 
+              />
+            ))}
+          </ul>
+        );
+      }
+
+      return (
+        <p 
+          key={idx} 
+          className="text-xs sm:text-sm text-slate-700 leading-relaxed my-2" 
+          dangerouslySetInnerHTML={{ __html: inlineFormat(trimmed) }} 
+        />
+      );
+    });
+  };
 
   const { program, outcomes, competencyFramework, coreCourses, electives, toolsCovered, hiringCompanies, executiveCoaches, certificationSimulator } = aiCertData;
 
@@ -296,64 +392,267 @@ export default function AiCertificationView({ onNavigateToAiPmHub }) {
                   </p>
                 </div>
 
+                {/* Search & Filter Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-indigo-600 shrink-0" />
+                    <div>
+                      <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
+                        Complete Syllabus Modules & In-Depth Masterclasses
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        Full lecture notes, mathematical formulas, step-by-step playbooks & copyable templates
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="relative max-w-xs w-full">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={courseSearchQuery}
+                      onChange={(e) => setCourseSearchQuery(e.target.value)}
+                      placeholder="Search topics (e.g. RAG, Eval, MCP)..."
+                      className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+
                 {/* Modules Accordion / List */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                    <Layers className="w-4 h-4 text-indigo-600" />
-                    Complete Syllabus Modules & Topics
-                  </h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {course.modules
+                      .filter(mod => {
+                        if (!courseSearchQuery) return true;
+                        const query = courseSearchQuery.toLowerCase();
+                        const modMatch = mod.title.toLowerCase().includes(query) || (mod.overview && mod.overview.toLowerCase().includes(query));
+                        const topicMatch = mod.detailedTopics && mod.detailedTopics.some(t => 
+                          t.title.toLowerCase().includes(query) || 
+                          (t.deepDive && t.deepDive.toLowerCase().includes(query)) ||
+                          (t.enterpriseCaseStudy && t.enterpriseCaseStudy.toLowerCase().includes(query))
+                        );
+                        return modMatch || topicMatch;
+                      })
+                      .map((mod) => {
+                        const isExpanded = expandedModuleId === mod.id;
+                        const detailedTopics = mod.detailedTopics || [];
 
-                  <div className="grid grid-cols-1 gap-3">
-                    {course.modules.map((mod) => {
-                      const isExpanded = expandedModuleId === mod.id;
-                      return (
-                        <div 
-                          key={mod.id}
-                          className={`rounded-2xl border transition-all ${
-                            isExpanded ? 'bg-slate-50/70 border-indigo-300 shadow-xs' : 'bg-white border-slate-200'
-                          }`}
-                        >
-                          <button
-                            onClick={() => setExpandedModuleId(isExpanded ? null : mod.id)}
-                            className="w-full text-left p-5 flex items-center justify-between gap-4"
+                        return (
+                          <div 
+                            key={mod.id}
+                            className={`rounded-2xl border transition-all ${
+                              isExpanded ? 'bg-slate-50/70 border-indigo-300 shadow-xs' : 'bg-white border-slate-200'
+                            }`}
                           >
-                            <div className="flex items-center gap-3">
-                              <span className="w-8 h-8 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0">
-                                {mod.number}
-                              </span>
-                              <h4 className="font-bold text-slate-900 text-sm sm:text-base">{mod.title}</h4>
-                            </div>
-                            <div className="text-slate-400">
-                              {isExpanded ? <ChevronUp className="w-5 h-5 text-indigo-600" /> : <ChevronDown className="w-5 h-5" />}
-                            </div>
-                          </button>
+                            <button
+                              onClick={() => setExpandedModuleId(isExpanded ? null : mod.id)}
+                              className="w-full text-left p-5 flex items-center justify-between gap-4"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="w-9 h-9 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm shadow-indigo-600/30">
+                                  {mod.number}
+                                </span>
+                                <div>
+                                  <h4 className="font-extrabold text-slate-900 text-base">{mod.title}</h4>
+                                  <span className="text-xs text-indigo-700 font-semibold mt-0.5 inline-block">
+                                    {detailedTopics.length} Comprehensive Masterclass Topics
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-slate-400">
+                                {isExpanded ? <ChevronUp className="w-5 h-5 text-indigo-600" /> : <ChevronDown className="w-5 h-5" />}
+                              </div>
+                            </button>
 
-                          {isExpanded && (
-                            <div className="px-5 pb-5 pt-1 border-t border-slate-100 space-y-4">
-                              <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                                {mod.topics.map((t, tIdx) => (
-                                  <li key={tIdx} className="flex items-start gap-2.5">
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                    <span className="leading-relaxed">{t}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                            {isExpanded && (
+                              <div className="px-5 pb-6 pt-1 border-t border-slate-100 space-y-6">
+                                {/* Module Overview */}
+                                {mod.moduleOverview && (
+                                  <div className="bg-white rounded-xl p-4 border border-slate-200/80 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                                    <strong className="text-slate-900 block mb-1">Module Executive Summary:</strong>
+                                    <span>{mod.moduleOverview}</span>
+                                  </div>
+                                )}
 
-                              {/* Hands-on Exercise */}
-                              {mod.practicalExercise && (
-                                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3.5 text-xs text-indigo-950 flex items-start gap-2">
-                                  <Zap className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                                  <div>
-                                    <strong className="block text-indigo-900">Hands-on Skill Project:</strong>
-                                    <span>{mod.practicalExercise}</span>
+                                {/* Hands-on Exercise */}
+                                {mod.practicalExercise && (
+                                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-4 text-xs text-indigo-950 flex items-start gap-3 shadow-xs">
+                                    <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                                      <Zap className="w-4 h-4 text-amber-300" />
+                                    </div>
+                                    <div>
+                                      <strong className="block text-indigo-900 text-xs font-bold uppercase tracking-wider">
+                                        Hands-on Capstone Lab Exercise:
+                                      </strong>
+                                      <span className="text-slate-700 mt-0.5 block leading-relaxed">{mod.practicalExercise}</span>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Detailed Masterclass Topics Header with Expand All Toggle */}
+                                <div className="space-y-4 pt-2">
+                                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                                    <div className="flex items-center gap-2">
+                                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                                      <h5 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                                        Topic Masterclasses & Implementation Blueprints
+                                      </h5>
+                                    </div>
+                                    <button
+                                      onClick={() => toggleAllTopicsInModule(mod.id, detailedTopics)}
+                                      className="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-lg border border-indigo-200/80 transition"
+                                    >
+                                      {isEveryTopicExpanded(mod.id, detailedTopics) ? 'Collapse All Topics' : 'Expand All Topic Masterclasses'}
+                                    </button>
+                                  </div>
+
+                                  {/* List of Detailed Topics */}
+                                  <div className="space-y-3">
+                                    {detailedTopics.map((topic, tIdx) => {
+                                      const topicKey = `${mod.id}-${tIdx}`;
+                                      const isTopicExpanded = !!expandedTopics[topicKey];
+
+                                      return (
+                                        <div 
+                                          key={tIdx} 
+                                          className={`rounded-xl border transition-all ${
+                                            isTopicExpanded 
+                                              ? 'bg-white border-indigo-300 shadow-md ring-1 ring-indigo-200' 
+                                              : 'bg-white border-slate-200 hover:border-slate-300'
+                                          }`}
+                                        >
+                                          {/* Topic Header Toggle */}
+                                          <button
+                                            onClick={() => toggleTopic(topicKey)}
+                                            className="w-full text-left p-4 flex items-start justify-between gap-3"
+                                          >
+                                            <div className="flex items-start gap-3">
+                                              <span className="w-6 h-6 rounded-md bg-indigo-100 text-indigo-800 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                                {mod.number}.{tIdx + 1}
+                                              </span>
+                                              <div>
+                                                <h5 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug">
+                                                  {topic.title}
+                                                </h5>
+                                                {!isTopicExpanded && (
+                                                  <span className="inline-block text-[11px] text-slate-500 mt-1 line-clamp-1">
+                                                    Includes Lecture Notes, Formulas, Step-by-Step Playbook, Enterprise Case Study & Deliverable Template
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+                                            <div className="text-slate-400 mt-0.5 shrink-0">
+                                              {isTopicExpanded ? <ChevronUp className="w-5 h-5 text-indigo-600" /> : <ChevronDown className="w-5 h-5" />}
+                                            </div>
+                                          </button>
+
+                                          {/* Topic Deep Dive Details */}
+                                          {isTopicExpanded && (
+                                            <div className="px-5 pb-6 pt-2 border-t border-slate-100 space-y-6 text-slate-800">
+                                              {/* 1. Deep Concept / Lecture Notes */}
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-900">
+                                                  <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                                                  Conceptual Deep Dive & Lecture Notes
+                                                </div>
+                                                <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200 text-slate-800">
+                                                  {renderFormattedText(topic.deepDive)}
+                                                </div>
+                                              </div>
+
+                                              {/* 2. Framework or Formula */}
+                                              {topic.frameworkOrFormula && (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-900">
+                                                    <Target className="w-3.5 h-3.5 text-purple-600" />
+                                                    Framework, Mathematical Formula & Architecture
+                                                  </div>
+                                                  <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-indigo-200 p-4 sm:p-5 rounded-xl border border-indigo-900/60 font-mono text-xs overflow-x-auto shadow-inner">
+                                                    {renderFormattedText(topic.frameworkOrFormula)}
+                                                  </div>
+                                                </div>
+                                              )}
+
+                                              {/* 3. Step-by-Step PM Implementation Playbook */}
+                                              {topic.implementationPlaybook && topic.implementationPlaybook.length > 0 && (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-900">
+                                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                                    Tactical Step-by-Step PM Playbook
+                                                  </div>
+                                                  <div className="bg-emerald-50/60 rounded-xl p-4 sm:p-5 border border-emerald-200">
+                                                    <ol className="space-y-3">
+                                                      {topic.implementationPlaybook.map((step, sIdx) => (
+                                                        <li key={sIdx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-800">
+                                                          <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                                            {sIdx + 1}
+                                                          </span>
+                                                          <span className="leading-relaxed">{step}</span>
+                                                        </li>
+                                                      ))}
+                                                    </ol>
+                                                  </div>
+                                                </div>
+                                              )}
+
+                                              {/* 4. Enterprise Case Study */}
+                                              {topic.enterpriseCaseStudy && (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-900">
+                                                    <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                                                    Enterprise Case Study & Quantitative Results
+                                                  </div>
+                                                  <div className="bg-amber-50/70 rounded-xl p-4 sm:p-5 border border-amber-200 text-xs sm:text-sm text-amber-950 leading-relaxed flex items-start gap-3.5">
+                                                    <div className="w-8 h-8 rounded-lg bg-amber-200 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
+                                                      <Building2 className="w-4 h-4" />
+                                                    </div>
+                                                    <p>{topic.enterpriseCaseStudy}</p>
+                                                  </div>
+                                                </div>
+                                              )}
+
+                                              {/* 5. Enterprise Deliverable Template */}
+                                              {topic.deliverableTemplate && (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800">
+                                                      <FileText className="w-3.5 h-3.5 text-slate-600" />
+                                                      Production Deliverable Template
+                                                    </div>
+                                                    <button
+                                                      onClick={() => handleCopyTemplate(topicKey, topic.deliverableTemplate)}
+                                                      className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition shadow-xs"
+                                                    >
+                                                      {copiedTemplateKey === topicKey ? (
+                                                        <>
+                                                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                          <span className="text-emerald-700">Copied to Clipboard!</span>
+                                                        </>
+                                                      ) : (
+                                                        <>
+                                                          <Copy className="w-3.5 h-3.5 text-indigo-600" />
+                                                          <span>Copy Template</span>
+                                                        </>
+                                                      )}
+                                                    </button>
+                                                  </div>
+                                                  <pre className="bg-slate-900 text-slate-200 p-4 sm:p-5 rounded-xl text-xs font-mono overflow-x-auto border border-slate-800 whitespace-pre-wrap leading-relaxed shadow-inner">
+                                                    <code>{topic.deliverableTemplate}</code>
+                                                  </pre>
+                                                </div>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
                                   </div>
                                 </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               </div>
@@ -820,9 +1119,15 @@ export default function AiCertificationView({ onNavigateToAiPmHub }) {
             {(() => {
               const activeEl = electives[selectedElectiveIndex];
               return (
-                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-5">
-                  <div>
-                    <h3 className="text-xl font-black text-slate-900">
+                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 space-y-6">
+                  <div className="border-b border-slate-200/80 pb-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                      <span className="text-xs font-bold text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-md">
+                        {activeEl.category}
+                      </span>
+                      <span className="text-xs text-slate-500 font-semibold">{activeEl.modules.length} Specialized Modules</span>
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900">
                       {activeEl.code}: {activeEl.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
@@ -830,25 +1135,212 @@ export default function AiCertificationView({ onNavigateToAiPmHub }) {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {activeEl.modules.map((m) => (
-                      <div key={m.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                            {m.number}
-                          </span>
-                          <h4 className="font-bold text-slate-900 text-sm">{m.title}</h4>
-                        </div>
-                        <ul className="space-y-1.5 text-xs text-slate-600 pt-1">
-                          {m.topics.map((t, tIdx) => (
-                            <li key={tIdx} className="flex items-start gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0"></span>
-                              <span>{t}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                  {/* Modules Accordion with Topic Masterclasses */}
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                      <Layers className="w-4 h-4 text-purple-600" />
+                      Elective Modules & Detailed Masterclasses
+                    </h4>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      {activeEl.modules.map((m) => {
+                        const isExpanded = expandedElectiveModuleId === m.id;
+                        const detailedTopics = m.detailedTopics || [];
+
+                        return (
+                          <div 
+                            key={m.id}
+                            className={`rounded-2xl border transition-all ${
+                              isExpanded ? 'bg-white border-purple-300 shadow-sm' : 'bg-white border-slate-200'
+                            }`}
+                          >
+                            <button
+                              onClick={() => setExpandedElectiveModuleId(isExpanded ? null : m.id)}
+                              className="w-full text-left p-5 flex items-center justify-between gap-4"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="w-8 h-8 rounded-lg bg-purple-600 text-white font-black text-xs flex items-center justify-center shrink-0">
+                                  {m.number}
+                                </span>
+                                <div>
+                                  <h4 className="font-bold text-slate-900 text-sm sm:text-base">{m.title}</h4>
+                                  <span className="text-xs text-purple-700 font-semibold mt-0.5 inline-block">
+                                    {detailedTopics.length} Detailed Masterclasses
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-slate-400">
+                                {isExpanded ? <ChevronUp className="w-5 h-5 text-purple-600" /> : <ChevronDown className="w-5 h-5" />}
+                              </div>
+                            </button>
+
+                            {isExpanded && (
+                              <div className="px-5 pb-6 pt-1 border-t border-slate-100 space-y-5">
+                                {m.moduleOverview && (
+                                  <div className="bg-purple-50/50 rounded-xl p-3.5 border border-purple-100 text-xs sm:text-sm text-purple-950 leading-relaxed">
+                                    <strong>Module Focus: </strong>{m.moduleOverview}
+                                  </div>
+                                )}
+
+                                {/* Header with Expand All Toggle */}
+                                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+                                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                                    Detailed Topic Masterclasses
+                                  </span>
+                                  <button
+                                    onClick={() => toggleAllTopicsInModule(m.id, detailedTopics)}
+                                    className="text-xs font-bold text-purple-600 hover:text-purple-800 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-lg border border-purple-200 transition"
+                                  >
+                                    {isEveryTopicExpanded(m.id, detailedTopics) ? 'Collapse All Topics' : 'Expand All Topic Masterclasses'}
+                                  </button>
+                                </div>
+
+                                {/* Detailed Topics List */}
+                                <div className="space-y-3">
+                                  {detailedTopics.map((topic, tIdx) => {
+                                    const topicKey = `${m.id}-${tIdx}`;
+                                    const isTopicExpanded = !!expandedTopics[topicKey];
+
+                                    return (
+                                      <div 
+                                        key={tIdx}
+                                        className={`rounded-xl border transition-all ${
+                                          isTopicExpanded 
+                                            ? 'bg-slate-50/70 border-purple-300 shadow-sm' 
+                                            : 'bg-white border-slate-200 hover:border-slate-300'
+                                        }`}
+                                      >
+                                        <button
+                                          onClick={() => toggleTopic(topicKey)}
+                                          className="w-full text-left p-4 flex items-start justify-between gap-3"
+                                        >
+                                          <div className="flex items-start gap-3">
+                                            <span className="w-6 h-6 rounded-md bg-purple-100 text-purple-800 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                              {m.number}.{tIdx + 1}
+                                            </span>
+                                            <div>
+                                              <h5 className="font-extrabold text-slate-900 text-sm sm:text-base leading-snug">
+                                                {topic.title}
+                                              </h5>
+                                              {!isTopicExpanded && (
+                                                <span className="inline-block text-[11px] text-slate-500 mt-1 line-clamp-1">
+                                                  Includes Conceptual Notes, Frameworks, Playbooks, Case Studies & Templates
+                                                </span>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div className="text-slate-400 mt-0.5 shrink-0">
+                                            {isTopicExpanded ? <ChevronUp className="w-5 h-5 text-purple-600" /> : <ChevronDown className="w-5 h-5" />}
+                                          </div>
+                                        </button>
+
+                                        {isTopicExpanded && (
+                                          <div className="px-5 pb-6 pt-2 border-t border-slate-100 space-y-5 text-slate-800">
+                                            {/* 1. Deep Concept */}
+                                            <div className="space-y-2">
+                                              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-900">
+                                                <BookOpen className="w-3.5 h-3.5 text-purple-600" />
+                                                Conceptual Deep Dive
+                                              </div>
+                                              <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200 text-slate-800">
+                                                {renderFormattedText(topic.deepDive)}
+                                              </div>
+                                            </div>
+
+                                            {/* 2. Framework or Formula */}
+                                            {topic.frameworkOrFormula && (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
+                                                  <Target className="w-3.5 h-3.5 text-indigo-600" />
+                                                  Strategic Framework & Model
+                                                </div>
+                                                <div className="bg-slate-900 text-purple-200 p-4 sm:p-5 rounded-xl border border-purple-900/40 font-mono text-xs overflow-x-auto shadow-inner">
+                                                  {renderFormattedText(topic.frameworkOrFormula)}
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {/* 3. Implementation Playbook */}
+                                            {topic.implementationPlaybook && topic.implementationPlaybook.length > 0 && (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-900">
+                                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                                  Step-by-Step Leadership & Execution Playbook
+                                                </div>
+                                                <div className="bg-emerald-50/60 rounded-xl p-4 sm:p-5 border border-emerald-200">
+                                                  <ol className="space-y-2.5">
+                                                    {topic.implementationPlaybook.map((step, sIdx) => (
+                                                      <li key={sIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800">
+                                                        <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                                          {sIdx + 1}
+                                                        </span>
+                                                        <span className="leading-relaxed">{step}</span>
+                                                      </li>
+                                                    ))}
+                                                  </ol>
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {/* 4. Enterprise Case Study */}
+                                            {topic.enterpriseCaseStudy && (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-900">
+                                                  <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                                                  Enterprise Case Study
+                                                </div>
+                                                <div className="bg-amber-50/70 rounded-xl p-4 sm:p-5 border border-amber-200 text-xs sm:text-sm text-amber-950 leading-relaxed flex items-start gap-3">
+                                                  <div className="w-8 h-8 rounded-lg bg-amber-200 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <Building2 className="w-4 h-4" />
+                                                  </div>
+                                                  <p>{topic.enterpriseCaseStudy}</p>
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {/* 5. Deliverable Template */}
+                                            {topic.deliverableTemplate && (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800">
+                                                    <FileText className="w-3.5 h-3.5 text-slate-600" />
+                                                    Executive Deliverable Template
+                                                  </div>
+                                                  <button
+                                                    onClick={() => handleCopyTemplate(topicKey, topic.deliverableTemplate)}
+                                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-lg border border-purple-200 transition"
+                                                  >
+                                                    {copiedTemplateKey === topicKey ? (
+                                                      <>
+                                                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                        <span className="text-emerald-700">Copied Template!</span>
+                                                      </>
+                                                    ) : (
+                                                      <>
+                                                        <Copy className="w-3.5 h-3.5 text-purple-600" />
+                                                        <span>Copy Template</span>
+                                                      </>
+                                                    )}
+                                                  </button>
+                                                </div>
+                                                <pre className="bg-slate-900 text-slate-200 p-4 sm:p-5 rounded-xl text-xs font-mono overflow-x-auto border border-slate-800 whitespace-pre-wrap leading-relaxed shadow-inner">
+                                                  <code>{topic.deliverableTemplate}</code>
+                                                </pre>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );

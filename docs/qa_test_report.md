@@ -35,11 +35,12 @@ The PO Mastery Academy software increment satisfies all enterprise functional, p
 7. **Question Uniqueness & Option Distribution Audit**: Verified 0 duplicate questions within every mock exam across all 30 tests, with uniform ~25% answer distribution across options A, B, C, D. Status: **PASS**
 8. **AI Product Manager Master Suite & Data Integrity**: Verified 6-stage roadmap, 2x2 Feasibility Matrix, unit economics calculator, and interview challenges. Status: **PASS**
 9. **International Certificate in AI Product Management (IPL Accredited)**: Verified:
-   - 3 Core Courses: AIPM401F (Generative AI), AIPM402F (Predictive AI), AIPM403F (Agent-driven Automation) with 100% of modules and topics from the accreditation specification.
+   - 3 Core Courses: AIPM401F (Generative AI), AIPM402F (Predictive AI), AIPM403F (Agent-driven Automation) with 100% of modules and all detailed topic masterclasses.
+   - 74 In-Depth Topic Masterclasses covering Conceptual Foundations, Mathematical Formulas ($P(Y|X)$, Confusion Matrix ROI, BCR, Metcalfe's Law), Tactical Step-by-Step PM Playbooks, Enterprise Case Studies (Amazon, Netflix, Uber, Target, Klarna, Microsoft), and Production Deliverable Templates with 1-click clipboard copying.
    - Adaptive AI PM Competency Framework™ (3 Personas, 5 Practice Areas, 3 AI Paradigms).
-   - 4 Electives: LDR401F, LDR402F, STG401F, DSN401F.
+   - 4 Electives: LDR401F (Communicating for Impact), LDR402F (Leading People & Teams), STG401F (Product & Digital Strategy), DSN401F (AI-Powered Concept Design).
    - 6 Program Outcomes, 9 Tools covered, 20 Hiring companies.
-   - 25-Question Official Exam Simulator with 80% passing threshold, domain diagnostics, and printable certificate generator. Status: **PASS**
+   - 25-Question Official Exam Simulator with 80% passing threshold, domain diagnostics, and printable certificate generator (`IPL-AIPM-2026`). Status: **PASS**
 10. **Evaluation Logic**: Validated scoring algorithms for chapter quizzes (80% gate) and mock exams. Status: **PASS**
 11. **Multi-Select Scoring Mechanics**: Verified strict evaluation of multi-response questions. Status: **PASS**
 12. **Passing Thresholds**: Verified individual certification thresholds (85%, 75%, 80%). Status: **PASS**

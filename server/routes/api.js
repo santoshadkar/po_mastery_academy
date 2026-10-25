@@ -289,6 +289,7 @@ router.get('/ai-cert/program', (req, res) => {
     competencyFramework: aiCertData.competencyFramework,
     coreCourses: aiCertData.coreCourses,
     electives: aiCertData.electives,
+    courseDetails: aiCertData.courseDetails,
     toolsCovered: aiCertData.toolsCovered,
     hiringCompanies: aiCertData.hiringCompanies,
     executiveCoaches: aiCertData.executiveCoaches

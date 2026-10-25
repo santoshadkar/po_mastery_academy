@@ -2,7 +2,9 @@
 // Complete Syllabus & Program Specification for the International Certificate in AI Product Management
 // Accredited by the Institute of Product Leadership (IPL)
 
-module.exports = {
+const courseDetails = require('./aiCertificationCourseDetails');
+
+const data = {
   program: {
     title: "International Certificate in AI Product Management",
     issuer: "Institute of Product Leadership (IPL)",
@@ -866,3 +868,30 @@ module.exports = {
     ]
   }
 };
+
+// Merge detailed topic masterclasses into coreCourses and electives
+data.coreCourses.forEach(c => {
+  if (courseDetails[c.code]) {
+    c.modules.forEach(m => {
+      if (courseDetails[c.code][m.id]) {
+        m.detailedTopics = courseDetails[c.code][m.id].topics;
+        m.moduleOverview = courseDetails[c.code][m.id].overview;
+      }
+    });
+  }
+});
+
+data.electives.forEach(e => {
+  if (courseDetails[e.code]) {
+    e.modules.forEach(m => {
+      if (courseDetails[e.code][m.id]) {
+        m.detailedTopics = courseDetails[e.code][m.id].topics;
+        m.moduleOverview = courseDetails[e.code][m.id].overview;
+      }
+    });
+  }
+});
+
+data.courseDetails = courseDetails;
+
+module.exports = data;

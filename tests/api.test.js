@@ -215,6 +215,15 @@ test('9. International Certificate in AI Product Management (IPL Accredited) Dat
       assert.ok(mod.title, 'Module must have title');
       assert.ok(mod.topics.length >= 3, `Module ${mod.id} must have detailed topic list`);
       assert.ok(mod.practicalExercise, `Module ${mod.id} must have a hands-on project exercise`);
+      assert.ok(mod.detailedTopics && mod.detailedTopics.length >= 3, `Module ${mod.id} must have detailed topic masterclasses`);
+      mod.detailedTopics.forEach(dt => {
+        assert.ok(dt.title, 'Topic must have title');
+        assert.ok(dt.deepDive, 'Topic must have conceptual deep dive');
+        assert.ok(dt.frameworkOrFormula, 'Topic must have framework or formula');
+        assert.ok(dt.implementationPlaybook && dt.implementationPlaybook.length >= 2, 'Topic must have implementation playbook');
+        assert.ok(dt.enterpriseCaseStudy, 'Topic must have enterprise case study');
+        assert.ok(dt.deliverableTemplate, 'Topic must have deliverable template');
+      });
     });
   });
 
@@ -225,6 +234,16 @@ test('9. International Certificate in AI Product Management (IPL Accredited) Dat
   assert.ok(elCodes.includes('LDR402F'), 'Must include LDR402F');
   assert.ok(elCodes.includes('STG401F'), 'Must include STG401F');
   assert.ok(elCodes.includes('DSN401F'), 'Must include DSN401F');
+
+  aiCertData.electives.forEach(elective => {
+    elective.modules.forEach(mod => {
+      assert.ok(mod.detailedTopics && mod.detailedTopics.length >= 2, `Elective module ${mod.id} must have detailed topics`);
+      mod.detailedTopics.forEach(dt => {
+        assert.ok(dt.title, 'Elective topic must have title');
+        assert.ok(dt.deepDive, 'Elective topic must have conceptual deep dive');
+      });
+    });
+  });
 
   // 5. Tools & Coaches
   assert.ok(aiCertData.toolsCovered.length >= 8, 'Must cover at least 8 industry tools (Google AI Studio, n8n, Langflow, AutoGen, Claude, etc.)');
