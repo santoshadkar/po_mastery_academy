@@ -5,6 +5,7 @@ const chapters = require('../data/chapters');
 const certifications = require('../data/certifications');
 const dailyBytes = require('../data/dailyBytes');
 const resources = require('../data/resources');
+const aiPmData = require('../data/aiPmData');
 
 // Health Check
 router.get('/health', (req, res) => {
@@ -259,6 +260,24 @@ router.get('/resources', (req, res) => {
   }
 
   res.json(filtered);
+});
+
+// AI Product Manager - Get Transition Roadmap & Masterclass
+router.get('/ai-pm/roadmap', (req, res) => {
+  res.json({
+    overview: aiPmData.overview,
+    stages: aiPmData.roadmapStages,
+    interviewMasterclass: aiPmData.interviewMasterclass
+  });
+});
+
+// AI Product Manager - Get Toolkits Configuration
+router.get('/ai-pm/tools', (req, res) => {
+  res.json({
+    modelPricingBenchmarks: aiPmData.modelPricingBenchmarks,
+    architectureTradeoffs: aiPmData.architectureTradeoffs,
+    readinessQuestions: aiPmData.readinessQuestions
+  });
 });
 
 module.exports = router;

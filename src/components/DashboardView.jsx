@@ -13,7 +13,9 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  Target
+  Target,
+  Bot,
+  Brain
 } from 'lucide-react';
 
 export default function DashboardView({ 
@@ -44,8 +46,8 @@ export default function DashboardView({
               Master Product Ownership from Foundations to Executive Leadership
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Equipping you with deep conceptual mastery across 10 progressive chapters, 
-              end-of-chapter assessments, daily micro-insights, and <span className="font-semibold text-blue-200">30 full replica mock certification exams</span> for PSPO I/II/III, CSPO, SAFe POPM, and ICP-APO.
+              Equipping you with deep conceptual mastery across {chapters.length} progressive chapters, 
+              end-of-chapter assessments, daily micro-insights, the dedicated <span className="text-purple-300 font-semibold">AI Product Manager Suite</span>, and <span className="font-semibold text-blue-200">30 full replica mock certification exams</span> for PSPO I/II/III, CSPO, SAFe POPM, and ICP-APO.
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button 
@@ -54,6 +56,13 @@ export default function DashboardView({
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Continue Curriculum</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('aiPm')}
+                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-600/30 transition transform hover:-translate-y-0.5"
+              >
+                <Bot className="w-4 h-4 text-purple-200" />
+                <span>AI PM Suite & Roadmap</span>
               </button>
               <button 
                 onClick={() => setActiveTab('certifications')}
@@ -68,7 +77,7 @@ export default function DashboardView({
           {/* Quick Stats Grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 shrink-0">
             <div className="bg-slate-800/80 backdrop-blur border border-slate-700/60 rounded-xl p-4 text-center">
-              <span className="text-2xl sm:text-3xl font-extrabold text-blue-400">{completedChaptersCount}/10</span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-blue-400">{completedChaptersCount}/{chapters.length}</span>
               <p className="text-xs text-slate-400 mt-1">Chapters Mastered</p>
             </div>
             <div className="bg-slate-800/80 backdrop-blur border border-slate-700/60 rounded-xl p-4 text-center">
@@ -116,6 +125,52 @@ export default function DashboardView({
           </button>
         </div>
       )}
+
+      {/* AI Product Manager Spotlight Banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-950 via-indigo-950 to-slate-900 border border-purple-500/30 p-6 shadow-xl">
+        <div className="absolute right-0 top-0 -mt-12 -mr-12 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold border border-purple-500/30">
+              <Bot className="w-3.5 h-3.5" />
+              <span>SPECIALIZED MASTER TRACK • AI PRODUCT MANAGEMENT</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+              Bridge from Scrum Product Owner to Elite AI Product Manager
+            </h2>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Master the shift from deterministic backlog slicing to probabilistic systems (<span className="text-purple-300 font-mono font-semibold">P(Y|X)</span>). 
+              Includes an end-to-end 16-week transition roadmap, interactive token cost & unit economics calculator, RAG vs Fine-Tuning trade-off explorer, 4-tier autonomy governance, and Senior AI PM interview masterclass.
+            </p>
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-400">
+              <span className="bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700/60 text-purple-200">16-Week Transition Blueprint</span>
+              <span className="bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700/60 text-purple-200">Live Token Cost Calculator</span>
+              <span className="bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700/60 text-purple-200">10-Question Readiness Assessment</span>
+              <span className="bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700/60 text-purple-200">Chapter 11 (35-min Masterclass)</span>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0 w-full lg:w-auto">
+            <button
+              onClick={() => setActiveTab('aiPm')}
+              className="inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-purple-600/30 transition transform hover:-translate-y-0.5"
+            >
+              <Bot className="w-4 h-4" />
+              <span>Launch AI PM Suite</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+            <button
+              onClick={() => {
+                setSelectedChapter('ch-11');
+                setActiveTab('chapters');
+              }}
+              className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-xs transition"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+              <span>Read Chapter 11 Deep Dive</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* 6 Certification Tracks Overview (30 Mock Exams Hub) */}
       <div className="space-y-4">
@@ -197,7 +252,7 @@ export default function DashboardView({
           <div>
             <h2 className="text-xl font-bold text-slate-900 flex items-center space-x-2">
               <BookOpen className="w-5 h-5 text-indigo-600" />
-              <span>PO Mastery Curriculum (10 Chapters)</span>
+              <span>PO Mastery Curriculum ({chapters.length} Chapters)</span>
             </h2>
             <p className="text-sm text-slate-500">
               Comprehensive readings with scenario-based assessments at the end of every chapter.

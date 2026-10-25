@@ -220,6 +220,26 @@
           }
         }
       }
+    },
+    "/ai-pm/roadmap": {
+      "get": {
+        "summary": "Retrieve complete AI Product Manager transition roadmap, stages, and mental models",
+        "responses": {
+          "200": {
+            "description": "AI PM Roadmap data object with stages, competencies, and interview masterclass"
+          }
+        }
+      }
+    },
+    "/ai-pm/tools": {
+      "get": {
+        "summary": "Retrieve interactive AI PM tool definitions (Feasibility Matrix, Architecture Trade-offs, Token Cost models, Self-Assessment)",
+        "responses": {
+          "200": {
+            "description": "AI PM Toolkits configuration and metadata"
+          }
+        }
+      }
     }
   },
   "components": {

@@ -14,6 +14,7 @@ The system adopts a **Clean Decoupled Architecture** separating presentation (Si
 |  +-----------------------------------------------------------------+  |
 |  |     React 18 SPA (Vite + Tailwind CSS + Lucide Icons)           |  |
 |  |  - Chapter Academy View (Progress, Interactive Assessments)     |  |
+|  |  - AI Product Manager Suite (16-Wk Roadmap, Token Calculator)     |  |
 |  |  - 30-Mock Exam Engine (Timer, Flags, Domain Score Diagnostic)  |  |
 |  |  - PO Daily Byte (Daily micro-lesson + Situational Case)        |  |
 |  |  - Media Resource Hub (Books, Podcasts, Videos, Bookmarks)     |  |
@@ -25,7 +26,8 @@ The system adopts a **Clean Decoupled Architecture** separating presentation (Si
 +-----------------------------------------------------------------------+
 |                    Node.js & Express API Gateway                      |
 |  - Config / Env Loader (.env with strict validation)                  |
-|  - Content Repository Services (Chapters, Assessments, Cert Exams)    |
+|  - Content Repository Services (Chapters 1-11, Assessments, Exams)    |
+|  - AI PM Services (/api/ai-pm/roadmap, /api/ai-pm/tools)             |
 |  - Exam Evaluator & Diagnostic Engine                                 |
 |  - Daily Byte Resolver Service                                        |
 |  - Resource Catalog Service                                           |
@@ -46,9 +48,9 @@ The system adopts a **Clean Decoupled Architecture** separating presentation (Si
 ## 3. Data Entities & Schema Overview
 
 1. **Chapter**:
-   - `id`: string (`ch-01` to `ch-10`)
+   - `id`: string (`ch-01` to `ch-11`)
    - `title`: string
-   - `category`: `Foundations` | `Strategy` | `Discovery` | `Execution` | `Metrics` | `Leadership`
+   - `category`: `Foundations` | `Strategy` | `Discovery` | `Execution` | `Metrics` | `Leadership` | `AI & Innovation`
    - `level`: `Beginner` | `Intermediate` | `Advanced`
    - `readTime`: string
    - `summary`: string
@@ -84,5 +86,12 @@ The system adopts a **Clean Decoupled Architecture** separating presentation (Si
    - `title`: string
    - `author`: string
    - `url`: string
+
+6. **AI Product Manager Toolkit Models**:
+   - `roadmapStages`: Array<{ id, number, title, timeframe, badge, description, keyConcepts, actionItems, sampleUserStory }>
+   - `modelPricingBenchmarks`: Array<{ id, name, provider, tier, inputPerMillion, outputPerMillion, cachedInputPerMillion, contextWindow, bestFor }>
+   - `architectureTradeoffs`: Array<{ dimension, setupTime, cost, dataRequirement, accuracyOnDynamicData, maintenance, bestUseCases }>
+   - `readinessQuestions`: Array<{ id, category, question, options: Array<{ text, score }> }>
+   - `interviewMasterclass`: Array<{ id, question, trapAnswer, trapCritique, modelAnswer }>
    - `description`: string
    - `tags`: string[]

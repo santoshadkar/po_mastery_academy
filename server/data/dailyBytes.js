@@ -369,5 +369,79 @@ module.exports = [
         }
       ]
     }
+  },
+  {
+    dayNumber: 11,
+    title: "Handling LLM Hallucinations in High-Stakes Customer Flows",
+    category: "AI Product Management",
+    coreConcept: "LLMs are probabilistic token predictors, not factual databases. When building customer-facing AI features (e.g., contractual analysis, medical advice, financial reporting), zero hallucination is impossible with raw prompting alone.",
+    proTip: "Never ask an LLM to generate sensitive facts from memory. Always implement Grounded RAG with strict chunk citation constraints, confidence scoring thresholds, and automatic fallback to human review.",
+    dilemma: {
+      scenario: "Your team is launching an AI contract summary feature for enterprise legal teams. In beta testing, the model accurately summarizes 96% of clauses, but in 4% of complex indemnity clauses it hallucinates liability limitations that do not exist in the contract.",
+      question: "What is your best immediate action as an AI Product Manager before rolling this out to all enterprise customers?",
+      options: [
+        {
+          id: "A",
+          text: "Launch the feature immediately with a generic legal disclaimer stating 'AI may make mistakes; user assumes all liability.'",
+          isRecommended: false,
+          feedback: "Disclaimers do not protect enterprise trust. A single hallucinated liability cap in legal tech can destroy customer trust and create massive contractual liability."
+        },
+        {
+          id: "B",
+          text: "Fine-tune a 70B open-weights model on 1,000 legal contracts assuming fine-tuning will eliminate factual errors.",
+          isRecommended: false,
+          feedback: "Fine-tuning modifies tone and syntax, but does NOT guarantee factual recall. It frequently increases overconfident hallucinations."
+        },
+        {
+          id: "C",
+          text: "Implement strict citation-grounded RAG, calculate confidence scores per extracted clause, flag any clause below 95% confidence for mandatory Human-in-the-Loop review, and highlight exact sentence source links.",
+          isRecommended: true,
+          feedback: "Masterful AI PM execution. You establish grounded verifiability, protect against high-stakes error, and provide transparency through human-in-the-loop escalation."
+        },
+        {
+          id: "D",
+          text: "Cancel the AI feature entirely and advise leadership that LLMs can never be used in legal products.",
+          isRecommended: false,
+          feedback: "Overly defensive. 96% accuracy is a high-leverage baseline if wrapped in proper probabilistic UX and verification guardrails."
+        }
+      ]
+    }
+  },
+  {
+    dayNumber: 12,
+    title: "Model Cascading and Protecting SaaS Margins Under Scale",
+    category: "AI Product Management & Unit Economics",
+    coreConcept: "Relying 100% on frontier models (e.g., GPT-4o, Claude 3.5 Sonnet) at $15/M output tokens will crush SaaS gross margins when user query volume scales 10x. Seasoned AI PMs implement model routing and semantic caching.",
+    proTip: "Analyze the complexity distribution of incoming queries. Typically 70-80% of user queries are simple classifications or summaries that can be answered by small language models (SLMs) costing 95% less.",
+    dilemma: {
+      scenario: "Your product's AI assistant feature went viral, growing from 10k to 500k daily queries. Your cloud LLM bill exploded from $1,200/mo to $48,000/mo, turning your gross margin negative (-12%).",
+      question: "How should you restructure the AI architecture to restore 70%+ gross margins without degrading user satisfaction?",
+      options: [
+        {
+          id: "A",
+          text: "Cap every user to 3 questions per day and shut off the assistant once the budget cap is reached.",
+          isRecommended: false,
+          feedback: "Drastically degrades product utility, harms retention, and destroys virality."
+        },
+        {
+          id: "B",
+          text: "Implement a semantic vector cache for frequent queries, route simple classification/extraction tasks to an SLM (e.g., GPT-4o-mini at $0.15/M tokens), and reserve frontier models only for multi-step reasoning.",
+          isRecommended: true,
+          feedback: "Exemplary AI PM economics! Model cascading and semantic caching routinely reduce token inference expenditure by 70-85% while maintaining sub-second latency."
+        },
+        {
+          id: "C",
+          text: "Immediately triple the subscription price for all existing customers.",
+          isRecommended: false,
+          feedback: "Punishes users for poor backend architectural design and causes massive churn."
+        },
+        {
+          id: "D",
+          text: "Downgrade all queries to a tiny open-source model running on a cheap CPU server regardless of reasoning quality.",
+          isRecommended: false,
+          feedback: "Complex queries will fail completely, causing widespread user frustration and product abandonment."
+        }
+      ]
+    }
   }
 ];

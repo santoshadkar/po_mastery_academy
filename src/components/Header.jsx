@@ -8,7 +8,8 @@ import {
   Library, 
   Timer, 
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Bot
 } from 'lucide-react';
 
 export default function Header({ 
@@ -20,7 +21,8 @@ export default function Header({
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Compass },
-    { id: 'chapters', label: 'Learning Academy', icon: BookOpen, badge: `${completedChaptersCount}/10` },
+    { id: 'chapters', label: 'Learning Academy', icon: BookOpen, badge: `${completedChaptersCount}/11` },
+    { id: 'aiPm', label: 'AI Product Manager', icon: Bot, badge: 'New', isAi: true },
     { id: 'certifications', label: '30 Mock Exams', icon: Timer, badge: `${completedExamsCount}/30` },
     { id: 'dailyByte', label: 'PO Daily Byte', icon: Sparkles, highlight: true },
     { id: 'resources', label: 'Media Library', icon: Library }
@@ -64,17 +66,25 @@ export default function Header({
                   onClick={() => setActiveTab(item.id)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
+                      ? item.isAi 
+                        ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold'
+                        : 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
+                      : item.isAi
+                      ? 'text-indigo-300 hover:bg-slate-800 hover:text-indigo-200 bg-indigo-500/10 border border-indigo-500/20'
                       : item.highlight
                       ? 'text-amber-300 hover:bg-slate-800 hover:text-amber-200 bg-amber-500/10 border border-amber-500/20'
                       : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.highlight ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.isAi ? 'text-indigo-400' : item.highlight ? 'text-amber-400' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                   {item.badge && (
-                    <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                      isActive ? 'bg-blue-800 text-blue-100' : 'bg-slate-800 text-slate-400'
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      isActive 
+                        ? 'bg-black/30 text-white' 
+                        : item.isAi 
+                        ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                        : 'bg-slate-800 text-slate-400'
                     }`}>
                       {item.badge}
                     </span>
@@ -100,7 +110,7 @@ export default function Header({
             <div className="hidden lg:flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full">
               <Award className="w-4 h-4 text-emerald-400" />
               <span className="text-xs font-bold text-emerald-300">
-                {Math.round(((completedChaptersCount / 10) * 0.4 + (completedExamsCount / 30) * 0.6) * 100)}% PO Ready
+                {Math.round(((completedChaptersCount / 11) * 0.4 + (completedExamsCount / 30) * 0.6) * 100)}% PO Ready
               </span>
             </div>
           </div>

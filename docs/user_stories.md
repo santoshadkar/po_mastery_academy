@@ -80,3 +80,28 @@
   - **Given** I am in the Resource Hub,
   - **When** I toggle between Books, Podcasts, Videos, or Topics,
   - **Then** the list filters instantaneously, showing ratings, takeaways, author credentials, and direct external reference links.
+
+---
+
+### Epic 5: AI Product Manager (AI PM) Mastery Suite
+
+#### US-08: AI PM Transition Roadmap & Deep Curriculum
+- **As a** Product Owner or Product Manager transitioning to AI,
+- **I want to** access a comprehensive, step-by-step roadmap from foundations (probabilistic thinking, ML literacy) to advanced Generative and Agentic AI,
+- **So that** I have the technical and strategic knowledge to lead AI initiatives with confidence.
+- **Acceptance Criteria (DoR):**
+  - **Given** I navigate to the AI Product Manager section or Chapter 11 in the Learning Academy,
+  - **When** I inspect the transition stages,
+  - **Then** I see detailed guidance on deterministic vs probabilistic systems, ML metrics (Precision/Recall/F1), Foundation Models, Prompting vs RAG vs Fine-Tuning, Agentic workflows, Evals, and Responsible AI governance.
+
+#### US-09: Interactive AI PM Toolkits & Interview Masterclass
+- **As an** aspiring or senior AI Product Manager,
+- **I want to** use interactive calculators (Token Unit Economics, Opportunity Feasibility, Architecture Explorer, Readiness Assessment) and review AI PM interview scenarios,
+- **So that** I can model production costs, make architectural trade-offs, and pass senior AI PM interviews.
+- **Acceptance Criteria (DoR):**
+  - **Given** I open the AI PM Toolkits tab,
+  - **When** I adjust token counts and user volumes in the Unit Economics Calculator,
+  - **Then** the monthly inference cost and cost-per-user dynamically recompute across GPT-4o, Claude 3.5 Sonnet, Gemini 1.5 Pro, and Llama 3.1 70B.
+  - **Given** I open the Interview Masterclass tab,
+  - **When** I review scenario questions,
+  - **Then** I see explicit Trap Answers and High-Scoring Senior AI PM Model Responses.

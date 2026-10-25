@@ -8,7 +8,7 @@ const dailyBytes = require('../server/data/dailyBytes');
 const resources = require('../server/data/resources');
 
 test('1. System Data Integrity - Chapters Curriculum', (t) => {
-  assert.equal(chapters.length, 10, 'Must have exactly 10 comprehensive learning chapters');
+  assert.ok(chapters.length >= 11, 'Must have at least 11 comprehensive learning chapters including AI PM');
   chapters.forEach((ch, idx) => {
     assert.ok(ch.id, `Chapter ${idx} must have an ID`);
     assert.ok(ch.title, `Chapter ${ch.id} must have a title`);
@@ -167,4 +167,21 @@ test('7. Question Uniqueness and Uniform Option Distribution Audit', (t) => {
       }
     });
   });
+});
+
+test('8. AI Product Manager Master Suite & Data Integrity', (t) => {
+  const aiPmData = require('../server/data/aiPmData');
+  assert.ok(aiPmData, 'aiPmData must exist');
+  assert.ok((aiPmData.roadmapStages || aiPmData.roadmap).length >= 6, 'Must provide at least 6-stage transition roadmap');
+  assert.ok((aiPmData.modelPricingBenchmarks || aiPmData.modelBenchmarks).length >= 5, 'Must provide pricing benchmarks for top frontier/SLM models');
+  assert.ok(aiPmData.architectureTradeoffs && aiPmData.architectureTradeoffs.length >= 4, 'Must provide architecture trade-offs');
+  assert.ok(aiPmData.readinessQuestions && aiPmData.readinessQuestions.length === 10, 'Must provide 10-question AI PM readiness assessment');
+  assert.ok(aiPmData.interviewMasterclass && aiPmData.interviewMasterclass.length >= 3, 'Must provide Senior AI PM interview masterclass');
+
+  // Validate Chapter 11 exists and is the AI PM chapter
+  const ch11 = chapters.find(c => c.id === 'ch-11');
+  assert.ok(ch11, 'Chapter 11 (AI PM) must be registered in chapters curriculum');
+  assert.equal(ch11.category, 'AI & Innovation', 'Chapter 11 category must be AI & Innovation');
+  assert.ok(ch11.subChapters.length >= 5, 'Chapter 11 must have at least 5 in-depth sub-chapters');
+  assert.ok(ch11.assessment.length >= 5, 'Chapter 11 must have 5 scenario assessment questions');
 });

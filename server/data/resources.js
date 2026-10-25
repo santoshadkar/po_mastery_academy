@@ -216,5 +216,52 @@ module.exports = [
       "Essential foundation for SAFe POPM certification."
     ],
     tags: ["SAFe POPM", "Scaling", "Prioritization"]
+  },
+  // AI Product Management Additions
+  {
+    id: "book-05",
+    type: "book",
+    title: "Designing Machine Learning Systems",
+    author: "Chip Huyen",
+    publisher: "O'Reilly Media",
+    url: "https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/",
+    rating: 4.95,
+    description: "The definitive technical handbook for product leaders and ML engineers navigating training data, feature engineering, offline vs online evaluation, and monitoring data/concept drift.",
+    keyTakeaways: [
+      "Frame business problems as ML objectives: clarify whether accuracy, latency, or throughput is the constraining variable.",
+      "Manage data drift and concept drift through continuous offline benchmark evaluations and automated shadow deployments.",
+      "Calculate compute and storage overhead upfront before architecting custom model pipelines."
+    ],
+    tags: ["AI PM", "Machine Learning", "System Design", "Evaluation"]
+  },
+  {
+    id: "pod-03",
+    type: "podcast",
+    title: "Latent Space: The AI Engineer & PM Podcast",
+    author: "Alessio Fanelli & Swyx (L/S Media)",
+    url: "https://www.latent.space/",
+    rating: 4.9,
+    description: "Deep technical conversations with leading AI founders and product builders breaking down real-world RAG architectures, model evals, token economics, and agent orchestration frameworks.",
+    keyTakeaways: [
+      "Why eval-driven development is the single greatest competitive moat for AI product companies.",
+      "Architectural trade-offs between prompting, semantic caching, RAG, and fine-tuning in production.",
+      "How leading product teams design multi-agent workflows with human-in-the-loop safeguards."
+    ],
+    tags: ["AI PM", "Generative AI", "LLM Evals", "Agentic Systems"]
+  },
+  {
+    id: "vid-05",
+    type: "video",
+    title: "State of GPT & Engineering Systems with Generative AI",
+    author: "Andrej Karpathy (OpenAI / MS Build)",
+    url: "https://www.youtube.com/watch?v=bZQun8Y4L2A",
+    rating: 4.98,
+    description: "The masterclass on how Large Language Models work under the hood: pre-training, supervised fine-tuning (SFT), RLHF, prompt engineering, and context window mechanics.",
+    keyTakeaways: [
+      "Mental models for understanding LLM reasoning: tokens as next-word probability distributions rather than factual databases.",
+      "Why system prompts, few-shot exemplars, and Retrieval-Augmented Generation (RAG) outperform fine-tuning for factual retrieval.",
+      "Understanding probabilistic confidence scores and failure mode degradation."
+    ],
+    tags: ["AI PM", "Foundation Models", "Prompt Engineering", "Deep Learning"]
   }
 ];

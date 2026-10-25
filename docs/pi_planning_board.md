@@ -14,6 +14,7 @@
 | **PI-OBJ-03** | Implement the "PO Daily Byte" continuous micro-learning feed with daily situational dilemmas, streak tracking, and scenario breakdowns. | 8 | Team Engagement | Committed |
 | **PI-OBJ-04** | Develop the Curated Media Hub indexing books, podcasts, keynote videos, and frameworks with filterable domain tags and action guides. | 8 | Team Content & UX | Committed |
 | **PI-OBJ-05** | Build clean modular architecture with decoupled API services, zero-hardcoding `.env`, 100% automated test coverage in `tests/`, and passing CAB gate. | 9 | Team Architecture & DevOps | Committed |
+| **PI-OBJ-06** | Deliver the AI Product Manager & AI Product Owner Mastery Suite, including 6-stage transition roadmap (basics to advanced), interactive AI token cost calculator, feasibility evaluator, architecture matrix, Chapter 11 curriculum, and interview masterclass. | 10 | Team AI & Innovation | Committed |
 
 ---
 

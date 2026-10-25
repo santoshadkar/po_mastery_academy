@@ -1,4 +1,4 @@
-// Aggregator for all 10 Exhaustive Master-Level PO Curriculum Chapters with Sub-Chapters
+// Aggregator for all Exhaustive Master-Level PO Curriculum Chapters with Sub-Chapters
 const ch1 = require('./curriculum/chapter1_roles');
 const ch2 = require('./curriculum/chapter2_frameworks');
 const ch3 = require('./curriculum/chapter3_prioritization');
@@ -9,6 +9,7 @@ const ch7 = require('./curriculum/chapter7_user_story_mapping');
 const ch8 = require('./curriculum/chapter8_epics_features_stories');
 const ch9 = require('./curriculum/chapter9_facilitation_saying_no');
 const ch10 = require('./curriculum/chapter10_leadership_tech_debt');
+const ch11 = require('./curriculum/chapter11_ai_product_manager');
 
 module.exports = [
   ch1,
@@ -20,5 +21,6 @@ module.exports = [
   ch7,
   ch8,
   ch9,
-  ch10
+  ch10,
+  ch11
 ];
