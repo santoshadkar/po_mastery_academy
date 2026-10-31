@@ -26,7 +26,9 @@ export default function DashboardView({
   setActiveTab, 
   setSelectedChapter, 
   setSelectedCertTrack,
-  onLaunchExam 
+  onLaunchExam,
+  onOpenDiagnostic,
+  onOpenLinkedInShare
 }) {
   const completedChaptersCount = Object.keys(userProgress.completedChapters || {}).length;
   const completedExamsCount = Object.keys(userProgress.completedExams || {}).length;
@@ -51,25 +53,32 @@ export default function DashboardView({
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button 
-                onClick={() => setActiveTab('chapters')}
+                onClick={onOpenDiagnostic}
+                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm shadow-lg shadow-orange-500/30 transition transform hover:-translate-y-0.5"
+              >
+                <Sparkles className="w-4 h-4 text-slate-950" />
+                <span>5-Min PO Diagnostic Test</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('toolkit')}
                 className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5"
               >
-                <BookOpen className="w-4 h-4" />
-                <span>Continue Curriculum</span>
+                <Target className="w-4 h-4" />
+                <span>PO Toolkit & WSJF</span>
               </button>
               <button 
-                onClick={() => setActiveTab('aiCert')}
-                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/30 transition transform hover:-translate-y-0.5"
-              >
-                <Award className="w-4 h-4 text-emerald-200" />
-                <span>AI PM Certification (IPL)</span>
-              </button>
-              <button 
-                onClick={() => setActiveTab('aiPm')}
+                onClick={() => setActiveTab('simulator')}
                 className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-600/30 transition transform hover:-translate-y-0.5"
               >
                 <Bot className="w-4 h-4 text-purple-200" />
-                <span>AI PM Suite & Roadmap</span>
+                <span>PO Dilemma Lab</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('interview')}
+                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/30 transition transform hover:-translate-y-0.5"
+              >
+                <Award className="w-4 h-4 text-emerald-200" />
+                <span>Interview War Room</span>
               </button>
               <button 
                 onClick={() => setActiveTab('certifications')}
@@ -99,6 +108,84 @@ export default function DashboardView({
               <span className="text-2xl sm:text-3xl font-extrabold text-purple-400">6 Certs</span>
               <p className="text-xs text-slate-400 mt-1">Track Simulator</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* New Growth Attraction Powerhouse Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Card 1: 5-Min Diagnostic */}
+        <div 
+          onClick={onOpenDiagnostic}
+          className="cursor-pointer bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-white p-6 rounded-3xl border-2 border-amber-300 hover:border-amber-500 transition-all shadow-xs hover:shadow-md group"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition-transform">
+              <Sparkles className="w-5 h-5" />
+            </span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">
+              5-Min Benchmark
+            </span>
+          </div>
+          <h3 className="text-lg font-black text-slate-900 group-hover:text-amber-800 transition">
+            PO Skill Gap Diagnostic
+          </h3>
+          <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            Test yourself across 5 core pillars: Strategy, Slicing, Scrum, Metrics & AI. Get an instant seniority evaluation and study roadmap.
+          </p>
+          <div className="mt-4 flex items-center text-xs font-bold text-amber-800 gap-1">
+            <span>Start Diagnostic Test</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+
+        {/* Card 2: PO Toolkit & Calculators */}
+        <div 
+          onClick={() => setActiveTab('toolkit')}
+          className="cursor-pointer bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-white p-6 rounded-3xl border-2 border-blue-200 hover:border-blue-400 transition-all shadow-xs hover:shadow-md group"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition-transform">
+              <Target className="w-5 h-5" />
+            </span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded-full">
+              Interactive Tools
+            </span>
+          </div>
+          <h3 className="text-lg font-black text-slate-900 group-hover:text-blue-700 transition">
+            PO Artifact & Toolkit Hub
+          </h3>
+          <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            Interactive WSJF & RICE prioritization calculators, 10 INVEST vertical story-slicing patterns, and copyable PRD/User Story templates.
+          </p>
+          <div className="mt-4 flex items-center text-xs font-bold text-blue-700 gap-1">
+            <span>Open Toolkit & Calculators</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+
+        {/* Card 3: Interview War Room */}
+        <div 
+          onClick={() => setActiveTab('interview')}
+          className="cursor-pointer bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-white p-6 rounded-3xl border-2 border-emerald-200 hover:border-emerald-400 transition-all shadow-xs hover:shadow-md group"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm group-hover:scale-105 transition-transform">
+              <Award className="w-5 h-5" />
+            </span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+              Career Prep
+            </span>
+          </div>
+          <h3 className="text-lg font-black text-slate-900 group-hover:text-emerald-700 transition">
+            PO Interview War Room
+          </h3>
+          <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            Real questions from Amazon, Google, and top FinTechs. Deconstruct interviewer expectations, red flags, and copyable model STAR answers.
+          </p>
+          <div className="mt-4 flex items-center text-xs font-bold text-emerald-700 gap-1">
+            <span>Prepare for Interviews</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
       </div>

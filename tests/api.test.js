@@ -265,3 +265,56 @@ test('9. International Certificate in AI Product Management (IPL Accredited) Dat
     assert.ok(q.domain, `Sim question ${idx} must be mapped to a syllabus domain`);
   });
 });
+
+test('10. PO Growth & Attraction Features Data Integrity (Diagnostic, Toolkit, Dilemmas, War Room)', () => {
+  const growthData = require('../server/data/poGrowthFeaturesData');
+  assert.ok(growthData, 'Growth features data must exist');
+
+  // 1. Diagnostic Assessment
+  const diag = growthData.diagnosticAssessment;
+  assert.ok(diag, 'Diagnostic assessment must exist');
+  assert.equal(diag.totalQuestions, 10, 'Must contain exactly 10 diagnostic questions');
+  assert.equal(diag.pillars.length, 5, 'Must evaluate across 5 core pillars');
+  diag.questions.forEach(q => {
+    assert.ok(q.id, 'Question must have id');
+    assert.ok(q.scenario, 'Question must have real-world scenario');
+    assert.ok(q.question, 'Question must have question text');
+    assert.equal(q.options.length, 4, 'Must have 4 decision options');
+    q.options.forEach(opt => {
+      assert.ok(opt.text, 'Option must have text');
+      assert.ok(typeof opt.score === 'number', 'Option must have score');
+      assert.ok(opt.feedback, 'Option must have coaching feedback');
+    });
+  });
+
+  // 2. Toolkit Hub & Calculators
+  const toolkit = growthData.toolkitHub;
+  assert.ok(toolkit.calculators.wsjf, 'Must include WSJF calculator specification');
+  assert.ok(toolkit.calculators.rice, 'Must include RICE calculator specification');
+  assert.ok(toolkit.storySlicingGuide.length >= 5, 'Must include at least 5 story slicing patterns');
+  assert.ok(toolkit.productionTemplates.length >= 2, 'Must include production PRD and User Story templates');
+
+  // 3. Scenario Dilemma Simulator
+  const sim = growthData.scenarioSimulator;
+  assert.ok(sim.scenarios.length >= 3, 'Must have at least 3 high-stakes dilemma scenarios');
+  sim.scenarios.forEach(scen => {
+    assert.ok(scen.title, 'Scenario must have title');
+    assert.ok(scen.dilemmaContext, 'Scenario must have context');
+    assert.ok(scen.options.length >= 2, 'Scenario must offer at least 2 options');
+    scen.options.forEach(opt => {
+      assert.ok(opt.impact, 'Option must have impact matrix (morale, predictability, trust)');
+    });
+  });
+
+  // 4. Interview War Room
+  const warRoom = growthData.interviewWarRoom;
+  assert.ok(warRoom.questions.length >= 5, 'Must include interview questions');
+  warRoom.questions.forEach(iq => {
+    assert.ok(iq.question, 'Interview item must have question');
+    assert.ok(iq.modelStarAnswer, 'Must have model STAR answer');
+    assert.ok(iq.modelStarAnswer.situation, 'STAR must have situation');
+    assert.ok(iq.modelStarAnswer.task, 'STAR must have task');
+    assert.ok(iq.modelStarAnswer.action, 'STAR must have action');
+    assert.ok(iq.modelStarAnswer.result, 'STAR must have result');
+  });
+});

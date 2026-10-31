@@ -7,6 +7,7 @@ const dailyBytes = require('../data/dailyBytes');
 const resources = require('../data/resources');
 const aiPmData = require('../data/aiPmData');
 const aiCertData = require('../data/aiCertificationData');
+const poGrowthData = require('../data/poGrowthFeaturesData');
 
 // Health Check
 router.get('/health', (req, res) => {
@@ -358,6 +359,94 @@ router.post('/ai-cert/submit-exam', (req, res) => {
     domainBreakdown,
     details
   });
+});
+
+// =========================================================================
+// PO Growth Features Endpoints
+// =========================================================================
+
+// 1. Diagnostic Assessment Quiz
+router.get('/po-growth/diagnostic', (req, res) => {
+  const diag = poGrowthData.diagnosticAssessment;
+  // Return questions without scores for fair test-taking
+  const sanitized = {
+    ...diag,
+    questions: diag.questions.map(q => ({
+      id: q.id,
+      pillar: q.pillar,
+      scenario: q.scenario,
+      question: q.question,
+      options: q.options.map(opt => ({ text: opt.text }))
+    }))
+  };
+  res.json(sanitized);
+});
+
+// Submit Diagnostic Assessment & Calculate Radar Breakdown
+router.post('/po-growth/diagnostic/submit', (req, res) => {
+  const userAnswers = req.body.answers || {}; // map of { [qId]: optionIdx }
+  const diag = poGrowthData.diagnosticAssessment;
+  let totalScore = 0;
+  const pillarScores = {};
+
+  diag.pillars.forEach(p => {
+    pillarScores[p.id] = { name: p.name, score: 0, maxScore: 0, feedback: [] };
+  });
+
+  const questionResults = diag.questions.map(q => {
+    const selectedIdx = userAnswers[q.id];
+    const option = q.options[selectedIdx] || { text: 'Not answered', score: 0, feedback: 'No answer selected.' };
+    totalScore += option.score;
+
+    if (pillarScores[q.pillar]) {
+      pillarScores[q.pillar].score += option.score;
+      pillarScores[q.pillar].maxScore += 5;
+      pillarScores[q.pillar].feedback.push(option.feedback);
+    }
+
+    return {
+      questionId: q.id,
+      pillar: q.pillar,
+      scenario: q.scenario,
+      question: q.question,
+      selectedOption: option.text,
+      score: option.score,
+      feedback: option.feedback
+    };
+  });
+
+  // Determine Seniority Profile
+  let profile = diag.seniorityProfiles.associate;
+  if (totalScore >= diag.seniorityProfiles.principal.scoreRange[0]) {
+    profile = diag.seniorityProfiles.principal;
+  } else if (totalScore >= diag.seniorityProfiles.senior.scoreRange[0]) {
+    profile = diag.seniorityProfiles.senior;
+  }
+
+  res.json({
+    totalScore,
+    maxScore: diag.questions.length * 5,
+    percentage: Math.round((totalScore / (diag.questions.length * 5)) * 100),
+    profile,
+    pillarScores,
+    questionResults,
+    evaluatedAt: new Date().toISOString()
+  });
+});
+
+// 2. PO Toolkit (Calculators, Templates, Slicing Guide)
+router.get('/po-growth/toolkit', (req, res) => {
+  res.json(poGrowthData.toolkitHub);
+});
+
+// 3. PO Scenario Simulator
+router.get('/po-growth/scenarios', (req, res) => {
+  res.json(poGrowthData.scenarioSimulator);
+});
+
+// 4. PO Interview War Room
+router.get('/po-growth/interview-war-room', (req, res) => {
+  res.json(poGrowthData.interviewWarRoom);
 });
 
 module.exports = router;

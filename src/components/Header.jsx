@@ -9,7 +9,10 @@ import {
   Timer, 
   CheckCircle2,
   Sparkles,
-  Bot
+  Bot,
+  Calculator,
+  Gamepad2,
+  Briefcase
 } from 'lucide-react';
 
 export default function Header({ 
@@ -17,15 +20,19 @@ export default function Header({
   setActiveTab, 
   streak, 
   completedChaptersCount, 
-  completedExamsCount 
+  completedExamsCount,
+  onOpenDiagnostic
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Compass },
     { id: 'chapters', label: 'Learning Academy', icon: BookOpen, badge: `${completedChaptersCount}/11` },
+    { id: 'toolkit', label: 'PO Toolkit', icon: Calculator, isNew: true },
+    { id: 'simulator', label: 'PO Simulator', icon: Gamepad2, isNew: true },
+    { id: 'interview', label: 'Interview War Room', icon: Briefcase, isNew: true },
     { id: 'aiPm', label: 'AI PM Hub', icon: Bot, isAi: true },
-    { id: 'aiCert', label: 'AI PM Certification', icon: Award, badge: 'IPL 3 Courses', isCert: true },
+    { id: 'aiCert', label: 'AI PM Certification', icon: Award, badge: 'IPL', isCert: true },
     { id: 'certifications', label: '30 Mock Exams', icon: Timer, badge: `${completedExamsCount}/30` },
-    { id: 'dailyByte', label: 'PO Daily Byte', icon: Sparkles, highlight: true },
+    { id: 'dailyByte', label: 'Daily Byte', icon: Sparkles, highlight: true },
     { id: 'resources', label: 'Media Library', icon: Library }
   ];
 
@@ -102,7 +109,18 @@ export default function Header({
           </nav>
 
           {/* Status Badges */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* 5-Min Diagnostic CTA */}
+            {onOpenDiagnostic && (
+              <button
+                onClick={onOpenDiagnostic}
+                className="hidden xl:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition transform hover:-translate-y-0.5"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>Benchmark PO Skills</span>
+              </button>
+            )}
+
             {/* Daily Streak */}
             <div 
               className="flex items-center space-x-1.5 bg-slate-800/80 border border-amber-500/30 px-3 py-1.5 rounded-full cursor-pointer hover:bg-slate-800 transition"
@@ -110,14 +128,14 @@ export default function Header({
               onClick={() => setActiveTab('dailyByte')}
             >
               <Flame className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
-              <span className="text-xs font-bold text-amber-300">{streak} Day Streak</span>
+              <span className="text-xs font-bold text-amber-300">{streak} Day</span>
             </div>
 
             {/* Quick Readiness Pill */}
             <div className="hidden lg:flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full">
               <Award className="w-4 h-4 text-emerald-400" />
               <span className="text-xs font-bold text-emerald-300">
-                {Math.round(((completedChaptersCount / 11) * 0.4 + (completedExamsCount / 30) * 0.6) * 100)}% PO Ready
+                {Math.round(((completedChaptersCount / 11) * 0.4 + (completedExamsCount / 30) * 0.6) * 100)}% Ready
               </span>
             </div>
           </div>

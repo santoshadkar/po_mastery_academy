@@ -7,6 +7,11 @@ import DailyByteView from './components/DailyByteView';
 import ResourceHubView from './components/ResourceHubView';
 import AiProductManagerView from './components/AiProductManagerView';
 import AiCertificationView from './components/AiCertificationView';
+import PoToolkitView from './components/PoToolkitView';
+import PoSimulatorView from './components/PoSimulatorView';
+import PoInterviewWarRoomView from './components/PoInterviewWarRoomView';
+import PoSkillAssessmentModal from './components/PoSkillAssessmentModal';
+import LinkedInShareModal from './components/LinkedInShareModal';
 
 import chaptersData from './data/chapters';
 import certificationsData from './data/certifications';
@@ -19,6 +24,14 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedChapterId, setSelectedChapterId] = useState('ch-01');
   const [selectedTrackId, setSelectedTrackId] = useState('pspo-1');
+
+  // Modals for Growth Features
+  const [diagnosticOpen, setDiagnosticOpen] = useState(false);
+  const [linkedInModalState, setLinkedInModalState] = useState({ isOpen: false, title: '', score: null });
+
+  const handleOpenLinkedIn = (title, score) => {
+    setLinkedInModalState({ isOpen: true, title: title || 'Senior Product Owner', score: score || null });
+  };
 
   // Load User Progress from localStorage
   const [userProgress, setUserProgress] = useState(() => {
@@ -97,6 +110,7 @@ export default function App() {
         streak={userProgress.streak || 1}
         completedChaptersCount={completedChaptersCount}
         completedExamsCount={completedExamsCount}
+        onOpenDiagnostic={() => setDiagnosticOpen(true)}
       />
 
       <main className="flex-1">
@@ -109,7 +123,28 @@ export default function App() {
             setActiveTab={setActiveTab}
             setSelectedChapter={setSelectedChapterId}
             setSelectedCertTrack={setSelectedTrackId}
+            onOpenDiagnostic={() => setDiagnosticOpen(true)}
+            onOpenLinkedInShare={handleOpenLinkedIn}
           />
+        )}
+
+        {activeTab === 'toolkit' && (
+          <PoToolkitView
+            onNavigateToChapter={(chId) => {
+              setSelectedChapterId(chId || 'ch-04');
+              setActiveTab('chapters');
+            }}
+          />
+        )}
+
+        {activeTab === 'simulator' && (
+          <PoSimulatorView
+            onOpenLinkedInShare={handleOpenLinkedIn}
+          />
+        )}
+
+        {activeTab === 'interview' && (
+          <PoInterviewWarRoomView />
         )}
 
         {activeTab === 'chapters' && (
@@ -189,6 +224,25 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {/* 5-Min Diagnostic Assessment Modal */}
+      <PoSkillAssessmentModal
+        isOpen={diagnosticOpen}
+        onClose={() => setDiagnosticOpen(false)}
+        onNavigateToChapter={(chId) => {
+          setSelectedChapterId(chId || 'ch-01');
+          setActiveTab('chapters');
+        }}
+        onOpenLinkedInShare={handleOpenLinkedIn}
+      />
+
+      {/* LinkedIn Share Modal */}
+      <LinkedInShareModal
+        isOpen={linkedInModalState.isOpen}
+        onClose={() => setLinkedInModalState({ isOpen: false, title: '', score: null })}
+        achievementTitle={linkedInModalState.title}
+        score={linkedInModalState.score}
+      />
     </div>
   );
 }
